@@ -1,6 +1,9 @@
 import * as THREE from "three";
 
-const SCALE_FACTOR = 1000;
+import starsVert from "./shaders/stars.vert.glsl";
+import starsFrag from "./shaders/stars.frag.glsl";
+
+const SCALE_FACTOR = 300;
 
 const getStarsJson = async () => {
   try {
@@ -55,12 +58,18 @@ starGeometry.setAttribute(
   new THREE.BufferAttribute(starPositions, 3),
 );
 
-const starMaterial = new THREE.PointsMaterial({
-  color: 0xffffff,
-  size: 50,
+const starMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    uColor: { value: new THREE.Color(0xffffff) },
+    uOpacity: { value: 0.8 },
+    uSize: { value: 75 },
+    uScale: { value: window.innerHeight / 2 },
+  },
+  vertexShader: starsVert,
+  fragmentShader: starsFrag,
   transparent: true,
-  opacity: 0.8,
-  sizeAttenuation: true, // Stars get smaller when further away
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
 });
 
 export const starField = new THREE.Points(starGeometry, starMaterial);

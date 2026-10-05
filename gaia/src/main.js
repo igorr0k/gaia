@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { Sky } from "three/addons/objects/Sky.js";
 
+import fetcher from "./fetch";
+
 import { starField } from "./stars";
 
 import earthVert from "./shaders/earth.vert.glsl";
@@ -10,6 +12,12 @@ import earthFrag from "./shaders/earth.frag.glsl";
 const scene = new THREE.Scene();
 
 const canvas = document.querySelector("#c");
+
+const data = await fetcher(
+  `https://api.nasa.gov/neo/rest/v1/neo/browse?page=1&size=20&api_key=OwTqlgjhPCMY2HKYjEua1fC9LjGpWMuaGWPe12ME`,
+);
+
+console.log(data);
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
