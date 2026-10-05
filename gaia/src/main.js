@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { Sky } from "three/addons/objects/Sky.js";
 
+const API_KEY = import.meta.env.VITE_NASA_API_KEY;
+
 import fetcher from "./fetch";
 
 import { starField } from "./stars";
@@ -14,10 +16,12 @@ const scene = new THREE.Scene();
 const canvas = document.querySelector("#c");
 
 const data = await fetcher(
-  `https://api.nasa.gov/neo/rest/v1/neo/browse?page=1&size=20&api_key=OwTqlgjhPCMY2HKYjEua1fC9LjGpWMuaGWPe12ME`,
+  `https://api.nasa.gov/neo/rest/v1/neo/browse?page=1&size=20&api_key=${API_KEY}`,
 );
 
-console.log(data);
+const datastring = JSON.stringify(data);
+const dataJSON = JSON.parse(datastring);
+console.log(dataJSON);
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
@@ -27,7 +31,7 @@ document.body.appendChild(renderer.domElement);
 // CAMERA
 const FOV = 75;
 const ASPECT_RATIO = window.innerWidth / window.innerHeight;
-const NEAR = 0.1;
+const NEAR = 1;
 const FAR = 40000;
 
 const camera = new THREE.PerspectiveCamera(FOV, ASPECT_RATIO, NEAR, FAR);
