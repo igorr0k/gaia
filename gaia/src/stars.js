@@ -64,6 +64,9 @@ const starMaterial = new THREE.ShaderMaterial({
     uOpacity: { value: 0.8 },
     uSize: { value: 75 },
     uScale: { value: window.innerHeight / 2 },
+    uPixelRatio: {
+      value: window.devicePixelRatio,
+    },
   },
   vertexShader: starsVert,
   fragmentShader: starsFrag,

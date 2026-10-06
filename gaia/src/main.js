@@ -11,7 +11,16 @@ import { starField } from "./stars";
 import earthVert from "./shaders/earth.vert.glsl";
 import earthFrag from "./shaders/earth.frag.glsl";
 
+// RESIZE WINDOW AND CRUCIALLY UPDATE devicePixelRatio on zoom
+// Higher zoom != lower texture pixel ratio
 const scene = new THREE.Scene();
+window.addEventListener("resize", () => {
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  updateStarUniforms();
+});
 
 const canvas = document.querySelector("#c");
 
@@ -25,13 +34,14 @@ console.log(dataJSON);
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
+renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // CAMERA
 const FOV = 75;
 const ASPECT_RATIO = window.innerWidth / window.innerHeight;
-const NEAR = 1;
+const NEAR = 0.1;
 const FAR = 40000;
 
 const camera = new THREE.PerspectiveCamera(FOV, ASPECT_RATIO, NEAR, FAR);
@@ -41,6 +51,7 @@ camera.position.z = 5;
 const controls = new OrbitControls(camera, canvas);
 controls.target.set(0, 0, 0);
 controls.update();
+controls.minDistance = 1.4;
 
 // OUTER SPACE / SKY
 const outerSpace = new Sky();
@@ -49,6 +60,13 @@ scene.add(outerSpace);
 
 // OBJECTS
 const loader = new THREE.TextureLoader();
+const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+
+function loadTexture(path) {
+  const texture = loader.load(path);
+  texture.anisotropy = maxAnisotropy;
+  return texture;
+}
 
 const earthGeometry = new THREE.IcosahedronGeometry(1, 12);
 
@@ -56,8 +74,8 @@ const earthGeometry = new THREE.IcosahedronGeometry(1, 12);
 const earthMaterial = new THREE.ShaderMaterial({
   uniforms: {
     sunDirection: { value: new THREE.Vector3(-2, 0.5, 1.5) },
-    earthNightTexture: { value: loader.load("/8k_earth_nightmap.jpg") },
-    earthTexture: { value: loader.load("/8k_earth_daymap.jpg") },
+    earthNightTexture: { value: loadTexture("/8k_earth_nightmap.jpg") },
+    earthTexture: { value: loadTexture("/8k_earth_daymap.jpg") },
   },
   vertexShader: earthVert,
   fragmentShader: earthFrag,
@@ -88,6 +106,14 @@ scene.add(earthGroup);
 
 scene.add(starField);
 
+const starUniforms = starField.material.uniforms;
+
+function updateStarUniforms() {
+  starUniforms.uScale.value = window.innerHeight / 2;
+  starUniforms.uPixelRatio.value = renderer.getPixelRatio();
+}
+
+updateStarUniforms();
 // Anything you want to change or move while
 // the app is running add it here
 function animate(time) {
