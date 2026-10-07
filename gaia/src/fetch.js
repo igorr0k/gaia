@@ -12,6 +12,7 @@ const fetcher = async (url) => {
     }
 
     const res = await response.json();
+
     return res;
   } catch (error) {
     console.log(`an error occured: ${error.message}`);

@@ -3,19 +3,29 @@
     <head>
         <meta charset="utf-8" />
         <title>gaia</title>
-        <style>
-            body {
-                margin: 0;
-                overflow: hidden;
-            }
-
-            canvas {
-                display: block;
-            }
-        </style>
+        <link rel="stylesheet" href="src/style.css" />
     </head>
-    <body>
+    <body class="m-0 overflow-hidden">
+        <div class="relative w-full">
+            <!--ThreeJS-->
+            <canvas id="c" class="block"></canvas>
+
+            <!--UI overlay-->
+            <div
+                id="ui"
+                class="absolute left-0 top-0 w-xl h-128 pointer-events-none bg-black/10 shadow-2xl text-white"
+            >
+                HELLO SIR
+            </div>
+
+            <!--Loading overlay-->
+            <div
+                id="loading-overlay"
+                class="bg-black z-40 inset-0 absolute pointer-events-none flex justify-center items-center opacity-100 transition-opacity duration-1000 ease-in"
+            >
+                <p>Loading Assets...</p>
+            </div>
+        </div>
         <script type="module" src="src/main.js"></script>
-        <canvas id="c"></canvas>
     </body>
 </html>
