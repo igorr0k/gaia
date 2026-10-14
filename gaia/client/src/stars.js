@@ -1,13 +1,13 @@
 import * as THREE from "three";
 
-import starsVert from "./shaders/stars.vert.glsl";
-import starsFrag from "./shaders/stars.frag.glsl";
+import starsVert from "./graphics/shaders/stars.vert.glsl";
+import starsFrag from "./graphics/shaders/stars.frag.glsl";
 
 const SCALE_FACTOR = 300;
 
 const getStarsJson = async () => {
   try {
-    const response = await fetch(`../stars.json`);
+    const response = await fetch(`/stars.json`);
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
     }
@@ -18,9 +18,7 @@ const getStarsJson = async () => {
   }
 };
 
-const data = await getStarsJson();
-const dataString = JSON.stringify(data);
-const starData = JSON.parse(dataString);
+const starData = await getStarsJson();
 
 const radians = (degrees) => {
   return degrees * (Math.PI / 180);
